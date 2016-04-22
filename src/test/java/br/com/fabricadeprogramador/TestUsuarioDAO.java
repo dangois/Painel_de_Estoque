@@ -1,26 +1,47 @@
 package br.com.fabricadeprogramador;
 
+import java.util.List;
+
 import br.com.fabricadeprogramador.persistencia.entidade.Usuario;
 import br.com.fabricadeprogramador.persistencia.jdbc.UsuarioDAO;
 
 public class TestUsuarioDAO {
 
 	public static void main(String[] args) {
-		testExcluir();
+		//testExcluir();
+		//testSalvar();
+		//testBuscarPorId();
+		testBuscarTodos();
+	}
+	
+	private static void testBuscarPorId() {
+		UsuarioDAO usuarioDAO = new UsuarioDAO();
+		Usuario usuario = usuarioDAO.buscarPorId(5);
+		System.out.println(usuario);
+	}
+	
+	private static void testBuscarTodos() {
+		UsuarioDAO usuarioDAO = new UsuarioDAO();
+		List<Usuario> lista = usuarioDAO.buscarTodos();
+		for (Usuario u: lista){
+			System.out.println(u);
+		}
 	}
 
-	public static void testExcluir() {
-		// Excluindo o Usuário
+	public static void testCadastrar() {
+		// Criando o Usuário
 		Usuario usu = new Usuario();
-		usu.setId(4);
+		usu.setNome("Jãozão");
+		usu.setLogin("jzao");
+		usu.setSenha("123");
 
-		// Excluindo usuário no banco de dados
+		// Cadastrando usuário no banco de dados
 		UsuarioDAO usuDAO = new UsuarioDAO();
-		usuDAO.excluir(usu);
+		usuDAO.cadastrar(usu);
 
-		System.out.println("Excluido com sucesso");
+		System.out.println("Cadastrado com sucesso");
 	}
-
+	
 	public static void testAlterar() {
 		// Alterando o Usuário
 		Usuario usu = new Usuario();
@@ -36,19 +57,32 @@ public class TestUsuarioDAO {
 		System.out.println("Alterado com sucesso");
 	}
 
-	public static void testCadastrar() {
-		// Criando o Usuário
+	public static void testExcluir() {
+		// Excluindo o Usuário
 		Usuario usu = new Usuario();
-		usu.setNome("Jãozão");
-		usu.setLogin("jzao");
-		usu.setSenha("123");
+		usu.setId(4);
 
-		// Cadastrando usuário no banco de dados
+		// Excluindo usuário no banco de dados
 		UsuarioDAO usuDAO = new UsuarioDAO();
-		usuDAO.cadastrar(usu);
+		usuDAO.excluir(usu);
 
-		System.out.println("Cadastrado com sucesso");
-
+		System.out.println("Excluido com sucesso");
 	}
+
+	public static void testSalvar(){
+		
+		Usuario usuario = new Usuario();
+		//usuario.setId(1);
+		usuario.setNome("Dandan");
+		usuario.setLogin("dg");
+		usuario.setSenha("123456");
+		
+		UsuarioDAO usuDAO = new UsuarioDAO();
+		usuDAO.salvar(usuario);
+		
+		System.out.println("Salvo com sucesso");
+	}
+
+
 
 }
