@@ -13,7 +13,7 @@ public class UsuarioDAO {
 	private Connection con = ConexaoFactory.getConnection();
 
 	public void cadastrar(Usuario usu) {
-		String sql = "insert into usuario (nome, login, senha) values (?,?,?)";
+		String sql = "insert into usuario (nome, login, senha) values (?,?,md5(?))";
 		try (PreparedStatement preparador = con.prepareStatement(sql)) {
 			preparador.setString(1, usu.getNome()); // Substitui o ? pelo dado
 													// do usuario
@@ -27,7 +27,7 @@ public class UsuarioDAO {
 	}
 
 	public void alterar(Usuario usu) {
-		String sql = "update usuario set nome=?, login=?, senha=? where id=?";
+		String sql = "update usuario set nome=?, login=?, senha=md5(?) where id=?";
 		try (PreparedStatement preparador = con.prepareStatement(sql)) {
 			preparador.setString(1, usu.getNome()); // Substitui o ? pelo dado
 													// do usuario
@@ -53,7 +53,7 @@ public class UsuarioDAO {
 	}
 
 	public void salvar(Usuario usuario) {
-		if (usuario.getId() != null) {
+		if (usuario.getId() != null && usuario.getId()!=0) {
 			alterar(usuario);
 		} else {
 			cadastrar(usuario);
@@ -93,10 +93,12 @@ public class UsuarioDAO {
 		}
 		return null;
 	}
+
 	/**
 	 * Realiza a busca de todos registros da tabela de usuários
-	 * @return Uma lista de objetos Usuario contendo 0 elementos quando não tiver registros
-	 * ou n elementos quando tiver resultados
+	 * 
+	 * @return Uma lista de objetos Usuario contendo 0 elementos quando não
+	 *         tiver registros ou n elementos quando tiver resultados
 	 */
 	public List<Usuario> buscarTodos() {
 
@@ -123,4 +125,29 @@ public class UsuarioDAO {
 		return lista;
 	}
 
+	public Usuario autenticar(Usuario usuConsulta) {
+
+		String sql = "Select * from usuario where login=? and senha=md5(?)";
+
+		try (PreparedStatement preparador = con.prepareStatement(sql)) {
+			preparador.setString(1, usuConsulta.getLogin());
+			preparador.setString(2, usuConsulta.getSenha());
+			ResultSet resultado = preparador.executeQuery();
+			// Posicionando o cursor no primeiro registro
+			if (resultado.next()) {
+				Usuario usuario = new Usuario();
+				usuario.setId(resultado.getInt("id"));
+				usuario.setNome(resultado.getString("nome"));
+				usuario.setLogin(resultado.getString("login"));
+				usuario.setSenha(resultado.getString("senha"));
+
+				return usuario;
+			}
+
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
+		return null;
+	}
 }
